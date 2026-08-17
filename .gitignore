@@ -1,0 +1,246 @@
+# ============================================
+# PYTHON
+# ============================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.venv2/
+envs/
+.env
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db.sqlite3
+
+# ============================================
+# DJANGO
+# ============================================
+
+# Django migrations (except init)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Django media and static
+media/
+staticfiles/
+*.media
+*.static
+
+# Django local settings
+local_settings.py
+settings_local.py
+settings/production.py
+
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+
+# Env files with secrets - NEVER COMMIT!
+.env
+.env.local
+.env.production
+.env.staging
+.env.dev
+.env.test
+.env.example
+
+# ============================================
+# JAVA (Payment Service)
+# ============================================
+
+# Compiled Java files
+*.class
+*.jar
+*.war
+*.ear
+
+# Build directories
+target/
+build/
+out/
+*.iml
+.idea/
+.gradle/
+
+# ============================================
+# FRONTEND (JavaScript/Node)
+# ============================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build directories
+dist/
+build/
+.next/
+out/
+.parcel-cache/
+
+# ============================================
+# IDE AND EDITOR FILES
+# ============================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# ============================================
+# OPERATING SYSTEM FILES
+# ============================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ============================================
+# DOCKER
+# ============================================
+
+*.pid
+docker-compose.override.yml
+docker-compose.dev.yml
+docker-compose.local.yml
+
+# ============================================
+# TESTING
+# ============================================
+
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.pytest_cache/
+*.cover
+*.test
+*.spec
+
+# ============================================
+# SECURITY - NEVER COMMIT!
+# ============================================
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.p8
+*.csr
+*.pkcs12
+
+# Secrets files
+secrets/
+.credentials/
+secrets.yaml
+secret_key.txt
+*.secret
+
+# ============================================
+# DEPLOYMENT
+# ============================================
+
+*.tar.gz
+*.zip
+*.tgz
+kubernetes/secrets/
+
+# ============================================
+# MISC
+# ============================================
+
+*.tmp
+*.temp
+*.bak
+*.swp
+core.*
+*.pid
+*.lock
+
+# ============================================
+# KAFKA / REDIS DATA (if local)
+# ============================================
+
+kafka_data/
+redis_data/
+postgres_data/
+*.rdb
+*.aof
+
+# ============================================
+# APPLICATION SPECIFIC
+# ============================================
+
+# Media uploads
+uploads/
+profile_photos/
+nrc_photos/
+listing_photos/
+
+# Reports
+reports/
+*.pdf
+
+# Temporary files
+tmp/
+temp/
+*.tmp
