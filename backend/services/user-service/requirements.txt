@@ -1,152 +1,77 @@
 # ============================================
 # CORE DJANGO - The Framework
 # ============================================
-# Django is our web framework. It provides:
-# - ORM for database operations
-# - Admin interface for managing users
-# - Authentication system
-# - Security features (CSRF, XSS protection)
-# - Template engine for emails
 Django==5.0.6
 
 # ============================================
 # REST API - Django REST Framework
 # ============================================
-# Django REST Framework for building APIs
-# Provides:
-# - Serializers (convert models to JSON)
-# - ViewSets (CRUD operations)
-# - Authentication classes
-# - Permission classes
-# - Throttling (rate limiting)
 djangorestframework==3.15.1
 
 # ============================================
 # CORS - Cross-Origin Resource Sharing
 # ============================================
-# Allows the frontend (React app) to call the backend API
-# Without this, browsers block requests from different origins
 django-cors-headers==4.3.1
 
 # ============================================
 # FILTERING - Query Parameters
 # ============================================
-# Allows filtering API results:
-# /api/users?role=farmer&is_verified=true
-# /api/users?search=John
 django-filter==24.2
 
 # ============================================
-# DATABASE - PostgreSQL with Spatial Support
+# DATABASE - PostgreSQL
 # ============================================
 # PostgreSQL adapter for Django
-# Allows Django to connect to PostgreSQL
 psycopg2-binary==2.9.9
-
-# PostGIS support for spatial queries
-# Used for:
-# - Farmer location storage (GPS coordinates)
-# - Distance calculations
-# - District-based searches
-django-postgis==0.4.0
 
 # ============================================
 # CACHE - Redis for Performance
 # ============================================
-# Redis cache backend for Django
-# Used for:
-# - Session storage
-# - Rate limiting
-# - Caching frequent queries
-# - OTP code storage
 django-redis==5.4.0
-
-# Redis client for Python
 redis==5.0.1
 
 # ============================================
 # AUTHENTICATION - JWT Tokens
 # ============================================
-# JWT authentication for Django REST Framework
-# Creates secure tokens for API access
-# Tokens expire after 30 minutes (refreshable)
 djangorestframework-simplejwt==5.3.0
 
 # ============================================
 # ENCRYPTION - Field-Level Security
 # ============================================
-# Field-level encryption for sensitive data
-# Encrypts NRC numbers at the database level
-# Uses Fernet symmetric encryption
-django-fernet-fields==2.0.0
-
-# Cryptography library for encryption
+# Field-level encryption for NRC numbers
+# Latest version is 0.6, not 2.0.0!
+django-fernet-fields==0.6
 cryptography==42.0.7
 
 # ============================================
 # PHONE NUMBER HANDLING
 # ============================================
-# Validates and formats phone numbers
-# Ensures phone numbers are in E.164 format
-# Used for SMS sending and user identification
 django-phonenumber-field==7.3.0
 phonenumbers==8.13.35
 
 # ============================================
 # ENVIRONMENT CONFIGURATION
 # ============================================
-# Load environment variables from .env file
-# Keeps secrets out of the code
 python-decouple==3.8
 
 # ============================================
 # BACKGROUND TASKS - Celery
 # ============================================
-# Celery for background tasks:
-# - Sending SMS notifications
-# - Sending emails
-# - Processing OTP verification
-# - Running periodic cleanup tasks
 celery==5.3.6
-
-# Celery Beat for scheduled tasks:
-# - Daily user cleanup
-# - Weekly reports
-# - Periodic fraud checks
 django-celery-beat==2.6.0
-
-# Celery Results for tracking tasks:
-# - Track task status
-# - Store task results
-# - Monitor task failures
 django-celery-results==2.5.1
 
 # ============================================
 # DEVELOPMENT TOOLS
 # ============================================
-# Django extensions for development:
-# - Better shell (shell_plus)
-# - Run script shortcuts
-# - Model visualization
 django-extensions==3.2.3
-
-# Debug toolbar for development:
-# - SQL query inspection
-# - Performance profiling
-# - Request/response inspection
 django-debug-toolbar==4.3.0
 
 # ============================================
 # TESTING
 # ============================================
-# Testing framework for Django
 pytest==8.2.0
 pytest-django==4.8.0
 pytest-cov==5.0.0
-pytest-xdist==3.6.1
-
-# Factory for creating test data
 factory-boy==3.3.0
-
-# Fake data generator
 faker==25.4.0
