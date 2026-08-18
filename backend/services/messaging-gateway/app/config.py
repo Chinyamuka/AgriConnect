@@ -25,13 +25,13 @@ class Settings(BaseSettings):
     # AFRICA'S TALKING - SMS/USSD Gateway
     # ========================================================================
     # Username for Africa's Talking API
-    africastalking_username: str = "sandbox"
+    africa_talking_username: str = "sandbox"
     
     # API Key from Africa's Talking dashboard
-    africastalking_api_key: str = ""
+    africa_talking_api_key: str = ""
     
     # Sender ID shown to recipients (must be registered)
-    africastalking_sender_id: str = "AgriConnect"
+    africa_talking_sender_id: str = "AgriConnect"
     
     # ========================================================================
     # REDIS - Session Management
@@ -68,6 +68,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra fields from .env
 
 
 # Create a single instance of settings to import

@@ -2,8 +2,6 @@
 ================================================================================
 API VIEWS FOR USER SERVICE
 ================================================================================
-
-This file defines all the API endpoints for user management.
 """
 from rest_framework.views import APIView
 from rest_framework import generics, permissions, status
@@ -13,7 +11,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.db import models as django_models
-from shared.models.enums import UserRole
+
+# Import from local enums instead of shared
+from ..enums import UserRole
 
 from ..serializers import (
     UserRegistrationSerializer,

@@ -1,0 +1,19 @@
+"""
+Django settings for user_service project.
+"""
+import sys
+import os
+from pathlib import Path
+
+# ============================================================================
+# ADD BACKEND DIRECTORY TO PYTHON PATH
+# ============================================================================
+# This MUST be at the top so shared module can be imported
+# The shared module is at: /path/to/AgriConnect/backend/shared/
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent.parent / 'backend'
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+    print(f"✅ Added backend directory to Python path: {BACKEND_DIR}")
+
+# Now we can import from shared
+from shared.models.enums import UserRole, Language

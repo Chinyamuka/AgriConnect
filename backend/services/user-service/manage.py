@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+import os
+import sys
+from pathlib import Path
+
+def main():
+    """Run administrative tasks."""
+    # Add the backend directory to Python path BEFORE loading Django
+    # This allows importing from shared module
+    backend_dir = Path(__file__).resolve().parent.parent.parent / 'backend'
+    if str(backend_dir) not in sys.path:
+        sys.path.insert(0, str(backend_dir))
+        print(f"✅ Added backend directory to Python path: {backend_dir}")
+    
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_service.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == '__main__':
+    main()

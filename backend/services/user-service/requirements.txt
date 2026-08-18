@@ -1,77 +1,18 @@
-# ============================================
-# CORE DJANGO - The Framework
-# ============================================
 Django==5.0.6
-
-# ============================================
-# REST API - Django REST Framework
-# ============================================
 djangorestframework==3.15.1
-
-# ============================================
-# CORS - Cross-Origin Resource Sharing
-# ============================================
 django-cors-headers==4.3.1
-
-# ============================================
-# FILTERING - Query Parameters
-# ============================================
 django-filter==24.2
-
-# ============================================
-# DATABASE - PostgreSQL
-# ============================================
-# PostgreSQL adapter for Django
 psycopg2-binary==2.9.9
-
-# ============================================
-# CACHE - Redis for Performance
-# ============================================
 django-redis==5.4.0
 redis==5.0.1
-
-# ============================================
-# AUTHENTICATION - JWT Tokens
-# ============================================
 djangorestframework-simplejwt==5.3.0
-
-# ============================================
-# ENCRYPTION - Field-Level Security
-# ============================================
-# Field-level encryption for NRC numbers
-# Latest version is 0.6, not 2.0.0!
-django-fernet-fields==0.6
+django-encrypted-model-fields==0.6.5
 cryptography==42.0.7
-
-# ============================================
-# PHONE NUMBER HANDLING
-# ============================================
 django-phonenumber-field==7.3.0
 phonenumbers==8.13.35
-
-# ============================================
-# ENVIRONMENT CONFIGURATION
-# ============================================
 python-decouple==3.8
-
-# ============================================
-# BACKGROUND TASKS - Celery
-# ============================================
 celery==5.3.6
 django-celery-beat==2.6.0
 django-celery-results==2.5.1
-
-# ============================================
-# DEVELOPMENT TOOLS
-# ============================================
 django-extensions==3.2.3
 django-debug-toolbar==4.3.0
-
-# ============================================
-# TESTING
-# ============================================
-pytest==8.2.0
-pytest-django==4.8.0
-pytest-cov==5.0.0
-factory-boy==3.3.0
-faker==25.4.0
