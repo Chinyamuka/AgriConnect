@@ -1,15 +1,16 @@
 """
 Kafka producer for the Messaging Gateway Service.
-
-Publishes events to Kafka for other services to consume.
 """
 import json
 import logging
 from typing import Optional
+from datetime import datetime
+
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Try to import aiokafka, but don't fail if not available
+# Try to import aiokafka
 try:
     from aiokafka import AIOKafkaProducer
     KAFKA_AVAILABLE = True
@@ -18,20 +19,12 @@ except ImportError:
     KAFKA_AVAILABLE = False
     logger.warning("⚠️ Kafka not available. Events will not be published.")
 
-from app.config import settings
-from app.models import SMSReceivedEvent, USSDUpdatedEvent
-
 
 class KafkaProducer:
-    """
-    Async Kafka producer.
-    
-    Publishes events to Kafka topics.
-    """
+    """Async Kafka producer for messaging events."""
     
     def __init__(self):
-        """Initialize the Kafka producer."""
-        self.producer: Optional[object] = None
+        self.producer: Optional[AIOKafkaProducer] = None
         self.enabled = KAFKA_AVAILABLE
     
     async def connect(self):
@@ -42,9 +35,8 @@ class KafkaProducer:
         try:
             self.producer = AIOKafkaProducer(
                 bootstrap_servers=settings.kafka_bootstrap_servers,
-                value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+                value_serializer=lambda v: json.dumps(v, default=str).encode('utf-8'),
                 compression_type='gzip',
-                max_batch_size=16384,
             )
             await self.producer.start()
             logger.info(f"✅ Connected to Kafka at {settings.kafka_bootstrap_servers}")
@@ -57,12 +49,29 @@ class KafkaProducer:
         if self.producer:
             await self.producer.stop()
             self.producer = None
-            logger.info("✅ Disconnected from Kafka")
     
-    async def publish_sms_received(self, event: SMSReceivedEvent):
-        """Publish an SMS received event."""
+    async def publish_sms_received(
+        self,
+        phone: str,
+        text: str,
+        command: str,
+        args: list,
+        language: str,
+        session_id: Optional[str] = None,
+    ):
+        """
+        Publish an SMS received event.
+        
+        Args:
+            phone: Sender's phone number
+            text: Raw SMS text
+            command: Parsed command
+            args: Command arguments
+            language: Detected language
+            session_id: Optional session ID
+        """
         if not self.enabled:
-            logger.debug(f"📤 Skipping Kafka publish (disabled): {event.phone}")
+            logger.debug(f"📤 Skipping Kafka publish (disabled): {phone}")
             return
         
         if not self.producer:
@@ -71,20 +80,29 @@ class KafkaProducer:
         if not self.producer:
             return
         
+        event = {
+            "event_type": "sms.received",
+            "phone": phone,
+            "text": text,
+            "command": command,
+            "args": args,
+            "language": language,
+            "session_id": session_id,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+        
         try:
-            data = event.dict()
             await self.producer.send(
                 topic=settings.kafka_topic_sms_received,
-                value=data
+                value=event
             )
-            logger.info(f"📤 Published sms.received: {event.phone}")
+            logger.info(f"📤 Published sms.received: {phone}")
         except Exception as e:
             logger.error(f"❌ Failed to publish SMS event: {str(e)}")
     
-    async def publish_ussd_updated(self, event: USSDUpdatedEvent):
+    async def publish_ussd_updated(self, session_id: str, phone: str, state: str, text: str):
         """Publish a USSD session updated event."""
         if not self.enabled:
-            logger.debug(f"📤 Skipping Kafka publish (disabled): {event.session_id}")
             return
         
         if not self.producer:
@@ -93,13 +111,21 @@ class KafkaProducer:
         if not self.producer:
             return
         
+        event = {
+            "event_type": "ussd.session.updated",
+            "session_id": session_id,
+            "phone": phone,
+            "state": state,
+            "text": text,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+        
         try:
-            data = event.dict()
             await self.producer.send(
                 topic=settings.kafka_topic_ussd_session,
-                value=data
+                value=event
             )
-            logger.info(f"📤 Published ussd.session.updated: {event.session_id}")
+            logger.info(f"📤 Published ussd.session.updated: {session_id}")
         except Exception as e:
             logger.error(f"❌ Failed to publish USSD event: {str(e)}")
 

@@ -33,7 +33,7 @@ async def create_transaction(
         amount=amount,
         platform_fee=platform_fee,
         farmer_payout=farmer_payout,
-        status=PaymentStatus.INITIATED,
+        status=PaymentStatus.INITIATED.value,  # Use .value for enum
     )
     
     db.add(transaction)
@@ -76,12 +76,15 @@ async def update_transaction_status(
     if not transaction:
         return None
     
+    # Store status before update for the log
+    status_before = transaction.status
+    
     # Create payment log before updating
     await create_payment_log(
         db=db,
         transaction_id=transaction_id,
         action=f"status_change_{status.value}",
-        status_before=transaction.status.value,
+        status_before=status_before,
         status_after=status.value,
         amount=transaction.amount,
         flutterwave_reference=flutterwave_reference,
@@ -89,7 +92,7 @@ async def update_transaction_status(
     )
     
     # Update status
-    transaction.status = status
+    transaction.status = status.value  # Store the string value
     
     # Set timestamps based on status
     if status == PaymentStatus.PAID_ESCROW:

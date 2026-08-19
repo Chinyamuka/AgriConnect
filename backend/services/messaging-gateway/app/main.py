@@ -9,7 +9,7 @@ from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.models import SMSWebhookRequest, ParsedCommand, Command
+from app.models import SMSWebhookRequest, ParsedCommand, Command, Language
 from app.commands import command_parser
 from app.templates import SMSTemplates
 from app.redis_client import redis_client
@@ -96,7 +96,6 @@ async def sms_webhook(request: Request):
         
         # Publish to Kafka
         await kafka_producer.publish_sms_received(
-            event_type="sms.received",
             phone=sms_request.phone,
             text=sms_request.text,
             command=parsed.command.value,
@@ -132,20 +131,17 @@ async def process_command(parsed: ParsedCommand) -> str:
     # ========================================================================
     elif command == Command.SELL:
         try:
-            # Parse args: [produce, quantity, unit, price, district]
             produce = parsed.args[0] if len(parsed.args) > 0 else ""
             quantity = float(parsed.args[1]) if len(parsed.args) > 1 else 0
             unit = parsed.args[2] if len(parsed.args) > 2 else "kg"
             price = float(parsed.args[3]) if len(parsed.args) > 3 else 0
             district = parsed.args[4] if len(parsed.args) > 4 else ""
             
-            # Get location from district
             lat, lng = command_parser.get_location(district)
             
             # TODO: Get farmer_id from phone number (lookup user)
-            farmer_id = "550e8400-e29b-41d4-a716-446655440000"  # Placeholder
+            farmer_id = "550e8400-e29b-41d4-a716-446655440000"
             
-            # Call Listing Service API
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
                     "http://localhost:8002/api/v1/listings/",
@@ -158,7 +154,7 @@ async def process_command(parsed: ParsedCommand) -> str:
                         "latitude": lat,
                         "longitude": lng,
                         "district": district,
-                        "province": "Zambia",  # You can map district to province
+                        "province": "Zambia",
                     }
                 )
                 
@@ -168,7 +164,7 @@ async def process_command(parsed: ParsedCommand) -> str:
                     return SMSTemplates.get(
                         "sell_success",
                         parsed.language,
-                        listing_id=listing_id[:8],  # Short ID for SMS
+                        listing_id=listing_id[:8],
                         produce=produce,
                         quantity=quantity,
                         unit=unit,
@@ -190,7 +186,6 @@ async def process_command(parsed: ParsedCommand) -> str:
             produce = parsed.args[0] if len(parsed.args) > 0 else ""
             district = parsed.args[1] if len(parsed.args) > 1 else ""
             
-            # Build query params
             params = {"status": "active"}
             if produce:
                 params["produce_type"] = produce
@@ -210,9 +205,8 @@ async def process_command(parsed: ParsedCommand) -> str:
                     if not listings:
                         return "📋 No listings found. Try different search terms."
                     
-                    # Format response for SMS (limited characters)
                     result = "📋 Listings found:\n"
-                    for i, listing in enumerate(listings[:5]):  # Max 5 listings
+                    for i, listing in enumerate(listings[:5]):
                         result += f"{i+1}. {listing['produce_type']} - {listing['quantity']}{listing['unit']} - K{listing['price']} - {listing['district']}\n"
                         result += f"   ID: {listing['id'][:8]}\n"
                     
@@ -236,7 +230,7 @@ async def process_command(parsed: ParsedCommand) -> str:
             amount = float(parsed.args[1]) if len(parsed.args) > 1 else 0
             
             # TODO: Get buyer_id from phone number
-            buyer_id = "550e8400-e29b-41d4-a716-446655440000"  # Placeholder
+            buyer_id = "550e8400-e29b-41d4-a716-446655440000"
             
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
@@ -252,12 +246,7 @@ async def process_command(parsed: ParsedCommand) -> str:
                 if response.status_code == 201:
                     bid = response.json()
                     bid_id = bid.get("id")
-                    return SMSTemplates.get(
-                        "bid_success",
-                        parsed.language,
-                        amount=amount,
-                        listing_id=listing_id[:8],
-                    )
+                    return f"✅ Bid placed! ID: {bid_id[:8]} for K{amount}"
                 else:
                     return f"❌ Failed to place bid. Error: {response.text}"
                     
@@ -266,20 +255,15 @@ async def process_command(parsed: ParsedCommand) -> str:
             return "❌ Failed to place bid. Please try again."
     
     # ========================================================================
-    # PRICE COMMAND - Get Market Price
+    # OTHER COMMANDS
     # ========================================================================
     elif command == Command.PRICE:
         produce = parsed.args[0] if len(parsed.args) > 0 else ""
         district = parsed.args[1] if len(parsed.args) > 1 else ""
-        
-        # TODO: Call Price Index Service
         return f"📊 Average price for {produce} in {district or 'Zambia'}: K2500/kg"
     
-    # ========================================================================
-    # OTHER COMMANDS
-    # ========================================================================
     elif command == Command.ACCEPT:
-        return f"✅ Bid {parsed.args[0] if parsed.args else 'unknown'} accepted! Transaction created."
+        return f"✅ Bid {parsed.args[0] if parsed.args else 'unknown'} accepted!"
     
     elif command == Command.PAY:
         return f"💰 Payment initiated for transaction {parsed.args[0] if parsed.args else 'unknown'}."

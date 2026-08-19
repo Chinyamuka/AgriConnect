@@ -32,14 +32,15 @@ class PaymentMethod(str, Enum):
 
 class PaymentInitiateRequest(BaseModel):
     """Request to initiate a payment."""
-    bid_id: UUID
-    payment_method: PaymentMethod
-    phone_number: str
+    bid_id: UUID = Field(..., description="ID of the bid being paid for")
+    amount: float = Field(..., gt=0, description="Amount to pay in ZMW")
+    payment_method: PaymentMethod = Field(..., description="Payment method")
+    phone_number: str = Field(..., description="Customer's phone number")
 
 
 class PaymentConfirmRequest(BaseModel):
     """Request to confirm delivery and release funds."""
-    transaction_id: UUID
+    transaction_id: UUID = Field(..., description="ID of the transaction")
 
 
 class TransactionResponse(BaseModel):

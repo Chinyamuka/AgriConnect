@@ -1,0 +1,52 @@
+# ============================================
+# CORE FASTAPI
+# ============================================
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# ============================================
+# DATABASE - PostgreSQL with PostGIS
+# ============================================
+# SQLAlchemy - ORM for database operations
+# asyncpg - Async PostgreSQL driver
+# geoalchemy2 - PostGIS support for SQLAlchemy
+# psycopg2-binary - PostgreSQL adapter
+sqlalchemy==2.0.28
+asyncpg==0.29.0
+geoalchemy2==0.14.4
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# ============================================
+# REDIS - Caching
+# ============================================
+redis==5.0.1
+
+# ============================================
+# KAFKA - Event Streaming
+# ============================================
+# Compatible versions that work together
+kafka-python==2.0.2
+aiokafka==0.7.2
+
+# ============================================
+# ENVIRONMENT
+# ============================================
+python-dotenv==1.0.0
+
+# ============================================
+# TESTING
+# ============================================
+pytest==8.2.0
+pytest-asyncio==0.23.3
+pytest-cov==5.0.0
+httpx==0.26.0
+
+# ============================================
+# UTILITIES
+# ============================================
+python-multipart==0.0.6
+# PostgreSQL driver - psycopg (modern, no localhost issues)
+psycopg[binary,pool]>=3.1.0
