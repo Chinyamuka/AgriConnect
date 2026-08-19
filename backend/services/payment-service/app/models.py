@@ -55,7 +55,8 @@ class Transaction(Base):
     completed_at = Column(DateTime, nullable=True)
     refunded_at = Column(DateTime, nullable=True)
     
-    metadata = Column(JSONB, nullable=True)
+    # Renamed from 'metadata' to 'extra_data' to avoid SQLAlchemy conflict
+    extra_data = Column(JSONB, nullable=True)
     
     __table_args__ = (
         Index('idx_transactions_bid', 'bid_id'),
@@ -89,7 +90,8 @@ class PaymentLog(Base):
     amount = Column(Float, nullable=True)
     flutterwave_reference = Column(String(100), nullable=True)
     
-    details = Column(JSONB, nullable=True)
+    # Renamed from 'metadata' to 'extra_data' to avoid SQLAlchemy conflict
+    extra_data = Column(JSONB, nullable=True)
     
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
     

@@ -68,7 +68,7 @@ async def update_transaction_status(
     transaction_id: UUID,
     status: PaymentStatus,
     flutterwave_reference: Optional[str] = None,
-    metadata: Optional[dict] = None,
+    extra_data: Optional[dict] = None,
 ) -> Optional[Transaction]:
     """Update transaction status."""
     transaction = await get_transaction(db, transaction_id)
@@ -85,7 +85,7 @@ async def update_transaction_status(
         status_after=status.value,
         amount=transaction.amount,
         flutterwave_reference=flutterwave_reference,
-        details=metadata,
+        extra_data=extra_data,
     )
     
     # Update status
@@ -104,8 +104,8 @@ async def update_transaction_status(
     if flutterwave_reference:
         transaction.flutterwave_reference = flutterwave_reference
     
-    if metadata:
-        transaction.metadata = metadata
+    if extra_data:
+        transaction.extra_data = extra_data
     
     await db.commit()
     await db.refresh(transaction)
@@ -124,7 +124,7 @@ async def create_payment_log(
     status_after: Optional[str] = None,
     amount: Optional[float] = None,
     flutterwave_reference: Optional[str] = None,
-    details: Optional[dict] = None,
+    extra_data: Optional[dict] = None,
 ) -> PaymentLog:
     """Create an immutable payment log entry."""
     log = PaymentLog(
@@ -134,7 +134,7 @@ async def create_payment_log(
         status_after=status_after,
         amount=amount,
         flutterwave_reference=flutterwave_reference,
-        details=details,
+        extra_data=extra_data,
     )
     
     db.add(log)
