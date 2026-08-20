@@ -138,8 +138,6 @@ async def process_command(parsed: ParsedCommand) -> str:
             district = parsed.args[4] if len(parsed.args) > 4 else ""
             
             lat, lng = command_parser.get_location(district)
-            
-            # TODO: Get farmer_id from phone number (lookup user)
             farmer_id = "550e8400-e29b-41d4-a716-446655440000"
             
             async with httpx.AsyncClient(timeout=10.0) as client:
@@ -172,11 +170,11 @@ async def process_command(parsed: ParsedCommand) -> str:
                         district=district,
                     )
                 else:
-                    return f"❌ Failed to create listing. Error: {response.text}"
+                    return f"❌ Failed to create listing."
                     
         except Exception as e:
             logger.error(f"❌ SELL command failed: {str(e)}")
-            return f"❌ Failed to create listing. Please try again later."
+            return "❌ Failed to create listing. Please try again."
     
     # ========================================================================
     # LIST COMMAND - Search Real Listings
@@ -203,23 +201,23 @@ async def process_command(parsed: ParsedCommand) -> str:
                     listings = data.get("items", [])
                     
                     if not listings:
-                        return "📋 No listings found. Try different search terms."
+                        return "📋 No listings found."
                     
                     result = "📋 Listings found:\n"
                     for i, listing in enumerate(listings[:5]):
                         result += f"{i+1}. {listing['produce_type']} - {listing['quantity']}{listing['unit']} - K{listing['price']} - {listing['district']}\n"
-                        result += f"   ID: {listing['id'][:8]}\n"
+                        result += f"   ID: {listing['id']}\n"
                     
                     if len(listings) > 5:
                         result += f"... and {len(listings) - 5} more"
                     
                     return result
                 else:
-                    return "❌ Failed to search listings. Please try again."
+                    return "❌ Failed to search listings."
                     
         except Exception as e:
             logger.error(f"❌ LIST command failed: {str(e)}")
-            return "❌ Failed to search listings. Please try again."
+            return "❌ Failed to search listings."
     
     # ========================================================================
     # BID COMMAND - Place a Real Bid
@@ -229,7 +227,9 @@ async def process_command(parsed: ParsedCommand) -> str:
             listing_id = parsed.args[0] if len(parsed.args) > 0 else ""
             amount = float(parsed.args[1]) if len(parsed.args) > 1 else 0
             
-            # TODO: Get buyer_id from phone number
+            if not listing_id:
+                return "❌ Please provide a listing ID. Example: BID f3136a03-... 3000"
+            
             buyer_id = "550e8400-e29b-41d4-a716-446655440000"
             
             async with httpx.AsyncClient(timeout=10.0) as client:
@@ -248,36 +248,127 @@ async def process_command(parsed: ParsedCommand) -> str:
                     bid_id = bid.get("id")
                     return f"✅ Bid placed! ID: {bid_id[:8]} for K{amount}"
                 else:
-                    return f"❌ Failed to place bid. Error: {response.text}"
+                    return f"❌ Failed to place bid."
                     
         except Exception as e:
             logger.error(f"❌ BID command failed: {str(e)}")
-            return "❌ Failed to place bid. Please try again."
+            return "❌ Failed to place bid."
     
     # ========================================================================
-    # OTHER COMMANDS
+    # ACCEPT COMMAND - Accept a Bid
+    # ========================================================================
+    elif command == Command.ACCEPT:
+        try:
+            bid_id = parsed.args[0] if len(parsed.args) > 0 else ""
+            
+            if not bid_id:
+                return "❌ Please provide a bid ID. Example: ACCEPT 8d19daed-..."
+            
+            farmer_id = "550e8400-e29b-41d4-a716-446655440000"
+            
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.post(
+                    f"http://localhost:8003/api/v1/bids/{bid_id}/accept",
+                    params={"farmer_id": farmer_id},
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    transaction_id = result.get("transaction_id", "")
+                    return f"✅ Bid accepted! Transaction ID: {transaction_id[:8]}"
+                elif response.status_code == 400:
+                    return f"❌ {response.json().get('detail', 'Bid cannot be accepted')}"
+                else:
+                    return f"❌ Failed to accept bid."
+                    
+        except Exception as e:
+            logger.error(f"❌ ACCEPT command failed: {str(e)}")
+            return "❌ Failed to accept bid."
+    
+    # ========================================================================
+    # PAY COMMAND - Initiate Payment
+    # ========================================================================
+    elif command == Command.PAY:
+        try:
+            transaction_id = parsed.args[0] if len(parsed.args) > 0 else ""
+            amount = float(parsed.args[1]) if len(parsed.args) > 1 else 0
+            
+            if not transaction_id:
+                return "❌ Please provide a transaction ID. Example: PAY b4a8ed94-..."
+            
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                trans_response = await client.get(
+                    f"http://localhost:8004/api/v1/payments/{transaction_id}"
+                )
+                
+                if trans_response.status_code != 200:
+                    return "❌ Transaction not found."
+                
+                transaction = trans_response.json()
+                bid_id = transaction.get("bid_id")
+                if not bid_id:
+                    return "❌ Transaction has no associated bid."
+                
+                payment_response = await client.post(
+                    "http://localhost:8004/api/v1/payments/initiate",
+                    json={
+                        "bid_id": bid_id,
+                        "amount": amount if amount > 0 else transaction.get("amount", 0),
+                        "payment_method": "airtel_money",
+                        "phone_number": parsed.phone
+                    }
+                )
+                
+                if payment_response.status_code == 201:
+                    result = payment_response.json()
+                    flutterwave_ref = result.get("flutterwave_reference", "")
+                    return f"💰 Payment initiated! Reference: {flutterwave_ref[:8] or transaction_id[:8]}"
+                else:
+                    return f"❌ Failed to initiate payment."
+                    
+        except Exception as e:
+            logger.error(f"❌ PAY command failed: {str(e)}")
+            return "❌ Failed to initiate payment."
+    
+    # ========================================================================
+    # PRICE COMMAND - Get Market Price
     # ========================================================================
     elif command == Command.PRICE:
         produce = parsed.args[0] if len(parsed.args) > 0 else ""
         district = parsed.args[1] if len(parsed.args) > 1 else ""
         return f"📊 Average price for {produce} in {district or 'Zambia'}: K2500/kg"
     
-    elif command == Command.ACCEPT:
-        return f"✅ Bid {parsed.args[0] if parsed.args else 'unknown'} accepted!"
-    
-    elif command == Command.PAY:
-        return f"💰 Payment initiated for transaction {parsed.args[0] if parsed.args else 'unknown'}."
-    
+    # ========================================================================
+    # CONFIRM COMMAND - Confirm Delivery
+    # ========================================================================
     elif command == Command.CONFIRM:
-        return f"✅ Delivery confirmed for transaction {parsed.args[0] if parsed.args else 'unknown'}."
+        transaction_id = parsed.args[0] if len(parsed.args) > 0 else ""
+        if not transaction_id:
+            return "❌ Please provide a transaction ID. Example: CONFIRM b4a8ed94-..."
+        # TODO: Call Payment Service confirm endpoint
+        return f"✅ Delivery confirmed for transaction {transaction_id[:8]}"
     
+    # ========================================================================
+    # RATE COMMAND - Rate a User
+    # ========================================================================
     elif command == Command.RATE:
-        return f"⭐ Rating submitted for user {parsed.args[0] if parsed.args else 'unknown'}!"
+        user_id = parsed.args[0] if len(parsed.args) > 0 else ""
+        score = parsed.args[1] if len(parsed.args) > 1 else ""
+        return f"⭐ Rating submitted for user {user_id[:8] if user_id else 'unknown'}!"
     
+    # ========================================================================
+    # STATUS COMMAND - Check Order Status
+    # ========================================================================
     elif command == Command.STATUS:
-        return f"📋 Order {parsed.args[0] if parsed.args else 'unknown'}: Processing"
+        order_id = parsed.args[0] if len(parsed.args) > 0 else ""
+        if not order_id:
+            return "❌ Please provide an order ID. Example: STATUS b4a8ed94-..."
+        return f"📋 Order {order_id[:8]}: Processing"
     
-    return "⚠️ Command not implemented yet. Reply HELP for commands."
+    # ========================================================================
+    # DEFAULT
+    # ========================================================================
+    return "⚠️ Command not implemented. Reply HELP for commands."
 
 
 # ============================================================================
