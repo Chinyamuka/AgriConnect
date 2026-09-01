@@ -1,0 +1,151 @@
+/**
+ * index.css - Global Styles for AgriConnect
+ *
+ * These styles apply to the ENTIRE application.
+ * They are loaded once and affect every component.
+ *
+ * The order matters:
+ * 1. @import (external fonts) → MUST be first
+ * 2. @tailwind (framework) → MUST come after @import
+ * 3. Custom styles → AFTER Tailwind
+ */
+
+/* ============================================================================
+   STEP 1: EXTERNAL FONTS
+   ============================================================================ */
+/*
+   Google Fonts: Inter
+   Why Inter?
+   - Professional, modern
+   - Clean and readable
+   - Used by Stripe, Linear, and many startups
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ============================================================================
+   STEP 2: TAILWIND DIRECTIVES
+   ============================================================================ */
+/*
+   Tailwind is a utility-first CSS framework.
+
+   @tailwind base     → Resets browser defaults (like normalize.css)
+   @tailwind components → Reusable component classes (like .btn, .card)
+   @tailwind utilities → Utility classes (like .p-4, .text-center, .bg-white)
+
+   These three lines generate thousands of CSS classes automatically.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   STEP 3: CUSTOM STYLES
+   ============================================================================ */
+
+/*
+   Body styles apply to the entire page.
+   Everything inside <body> inherits these styles.
+*/
+body {
+  font-family: 'Inter', sans-serif;
+  background: #faf9f6;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+   Glass Morphism Card
+   This creates the "frosted glass" effect.
+
+   How it works:
+   1. background: rgba(255,255,255,0.7) → Semi-transparent white
+   2. backdrop-filter: blur(20px) → Blurs the background behind the element
+   3. border: 1px solid rgba(255,255,255,0.3) → Subtle white border
+   4. box-shadow: 0 8px 32px rgba(0,0,0,0.06) → Soft shadow for depth
+   5. border-radius: 24px → Rounded corners
+*/
+.glass-card {
+  background: rgb(255 255 255 / 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); /* For Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  border-radius: 22px;
+}
+
+/*
+   Gradient Hero
+   Creates the green-brown gradient background.
+
+   Colors:
+   #0a2e1a → Darkest green
+   #14532d → Dark green
+   #15803d → Primary green
+   #7f4f24 → Brown
+
+   Why these colors?
+   - Green represents agriculture, growth, Zambia's landscape
+   - Brown represents soil, earth, farming
+*/
+.gradient-hero {
+  background: linear-gradient(
+    135deg,
+    #02240e 0%,     /* Start: Dark green */ #000201 30%,    /* Mid: Forest green */ #021f14 60%,    /* Mid: Vibrant green */ #16a803 100%    /* End: Earth brown */
+  );
+}
+
+/*
+   Primary Button
+   Used for main actions (Get Started, Sign In, Submit)
+
+   Design decisions:
+   - Dark background (#1a1a1a) → Stands out on colored backgrounds
+   - White text → High contrast
+   - Rounded corners (12px) → Modern, friendly
+   - Hover: Darken, lift up, add shadow → Interactive feedback
+*/
+.btn-primary {
+  background: #021f14;
+  color: #ffffff;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #185b0a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/*
+   Outline Button
+   Used for secondary actions (Learn More, Cancel)
+
+   Design decisions:
+   - Transparent background → Less prominent than primary
+   - White border → Visible on dark backgrounds
+   - Hover: White background with opacity → Interactive feedback
+*/
+.btn-outline {
+  background: transparent;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}

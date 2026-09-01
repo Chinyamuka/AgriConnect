@@ -1,17 +1,19 @@
 """
-Django settings for user_service project.
+Django settings for the user_service project.
 """
 import os
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
 
+from sqlalchemy.engine import default
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-change-this')
-
+FIELD_ENCRYPTION_KEY = config('FIELD_ENCRYPTION_KEY', default="encryption-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
@@ -152,8 +154,11 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
-# CORS
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,http://localhost:8000').split(',')
+# CORS - Allow React frontend
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://localhost:5173,http://localhost:8000'
+).split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 # Redis
@@ -191,87 +196,15 @@ AFRICA_TALKING_USERNAME = config('AFRICA_TALKING_USERNAME', default='')
 AFRICA_TALKING_API_KEY = config('AFRICA_TALKING_API_KEY', default='')
 AFRICA_TALKING_SENDER_ID = config('AFRICA_TALKING_SENDER_ID', default='AgriConnect')
 
-# Logging - Fixed to only use console in development
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
+        'verbose': {'format': '{levelname} {asctime} {module} {message}', 'style': '{'},
     },
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
+        'console': {'class': 'logging.StreamHandler', 'formatter': 'verbose'},
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'accounts': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
+    'root': {'handlers': ['console'], 'level': 'INFO'},
 }
-
-# ============================================================================
-# ENCRYPTION SETTINGS - For EncryptedModelFields
-# ============================================================================
-# This is the master encryption key for all encrypted fields.
-# WARNING: Keep this key secret! If lost, encrypted data cannot be recovered!
-#
-# To generate a new key: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-FIELD_ENCRYPTION_KEY = 'p8TAgA_dk5wWYIsv2hp58S9eyHxiTnys5HDo1AABfEo='
-
-# Directory for storing encryption keys
-ENCRYPTED_FIELDS_KEYDIR = BASE_DIR / 'keys'
-os.makedirs(ENCRYPTED_FIELDS_KEYDIR, exist_ok=True)
-# ============================================================================
-# PYTHON PATH - Add shared module
-# ============================================================================
-# This allows importing from the shared module
-# The shared module is at backend/shared/
-import sys
-SHARED_DIR = BASE_DIR.parent.parent / 'shared'
-if str(SHARED_DIR) not in sys.path:
-    sys.path.insert(0, str(SHARED_DIR))
-    print(f"✅ Added shared directory to Python path: {SHARED_DIR}")
-
-# ============================================================================
-# PYTHON PATH - Add shared module
-# ============================================================================
-# The shared module is at: /path/to/AgriConnect/backend/shared/
-# We need to add this to Python's import path
-import sys
-import os
-
-# Get the absolute path to the shared directory
-# BASE_DIR = /path/to/AgriConnect/backend/services/user-service
-# parent of BASE_DIR = /path/to/AgriConnect/backend/services
-# parent.parent of BASE_DIR = /path/to/AgriConnect/backend
-SHARED_DIR = BASE_DIR.parent.parent / 'shared'
-
-# Convert to absolute path
-SHARED_DIR = SHARED_DIR.resolve()
-
-# Add to Python path if not already there
-if str(SHARED_DIR) not in sys.path:
-    sys.path.insert(0, str(SHARED_DIR))
-    print(f"✅ Added shared directory to Python path: {SHARED_DIR}")
-else:
-    print(f"⚠️ Shared directory already in path: {SHARED_DIR}")

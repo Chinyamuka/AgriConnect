@@ -2,8 +2,6 @@
 ================================================================================
 FLUTTERWAVE WEBHOOKS
 ================================================================================
-
-This file handles incoming webhooks from Flutterwave.
 """
 import json
 import hmac
@@ -28,10 +26,6 @@ async def flutterwave_webhook(
 ):
     """
     Handle Flutterwave webhook.
-    
-    Security:
-        1. Verify the webhook signature using the Secret Hash
-        2. Validate the request is from Flutterwave
     """
     try:
         # Get the raw body
@@ -73,61 +67,46 @@ async def flutterwave_webhook(
             flutterwave_ref = event_data.get("flw_ref")
             tx_ref = event_data.get("tx_ref")
             status_value = event_data.get("status")
-            amount = event_data.get("amount")
             
-            logger.info(f"💰 Payment completed: {flutterwave_ref}, Status: {status_value}, tx_ref: {tx_ref}")
+            logger.info(f"💰 Payment: {flutterwave_ref}, Status: {status_value}, tx_ref: {tx_ref}")
             
             if status_value == "successful":
                 # Get a database session
-                db = next(await get_db())
-                
-                try:
-                    # Try to find transaction by tx_ref or flutterwave_ref
-                    from app.models import Transaction
-                    from sqlalchemy import select
-                    
-                    # First try by flutterwave_reference
-                    query = select(Transaction).where(Transaction.flutterwave_reference == flutterwave_ref)
-                    result = await db.execute(query)
-                    transaction = result.scalar_one_or_none()
-                    
-                    # If not found, try by tx_ref (which should be the transaction ID)
-                    if not transaction and tx_ref:
+                async for db in get_db():
+                    try:
+                        # Try to find transaction by tx_ref
+                        from uuid import UUID
                         try:
-                            from uuid import UUID
                             tx_uuid = UUID(tx_ref)
                             transaction = await get_transaction(db, tx_uuid)
+                            
+                            if transaction:
+                                # Update transaction status
+                                await update_transaction_status(
+                                    db=db,
+                                    transaction_id=transaction.id,
+                                    status=PaymentStatus.PAID_ESCROW,
+                                    flutterwave_reference=flutterwave_ref,
+                                    extra_data={"webhook": data},
+                                )
+                                logger.info(f"✅ Transaction {transaction.id} updated to paid_escrow")
+                                
+                                # Publish event
+                                await kafka_producer.publish_payment_completed(transaction)
+                            else:
+                                logger.warning(f"⚠️ No transaction found for tx_ref: {tx_ref}")
                         except ValueError:
-                            pass
-                    
-                    if transaction:
-                        # Update transaction status
-                        await update_transaction_status(
-                            db=db,
-                            transaction_id=transaction.id,
-                            status=PaymentStatus.PAID_ESCROW,
-                            flutterwave_reference=flutterwave_ref,
-                            extra_data={"webhook": data},
-                        )
-                        logger.info(f"✅ Transaction {transaction.id} updated to paid_escrow")
-                        
-                        # Publish event
-                        await kafka_producer.publish_payment_completed(transaction)
-                    else:
-                        logger.warning(f"⚠️ No transaction found for ref: {flutterwave_ref} or tx_ref: {tx_ref}")
-                        
-                finally:
-                    await db.close()
+                            logger.warning(f"⚠️ Invalid tx_ref UUID: {tx_ref}")
+                    finally:
+                        await db.close()
+                        break
             
             return {"status": "received"}
         
         elif event == "transfer.completed":
             flutterwave_ref = event_data.get("reference")
             status_value = event_data.get("status")
-            amount = event_data.get("amount")
-            
             logger.info(f"💸 Transfer completed: {flutterwave_ref}, Status: {status_value}")
-            
             return {"status": "received"}
         
         else:
@@ -141,4 +120,4 @@ async def flutterwave_webhook(
         raise
     except Exception as e:
         logger.error(f"❌ Webhook processing error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Webhook processing failed")
+        raise HTTPException(status_code=500, detail=f"Webhook processing failed: {str(e)}")

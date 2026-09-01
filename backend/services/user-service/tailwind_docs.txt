@@ -1,0 +1,503 @@
+================================================================================
+                    🎨 TAILWIND CSS COMPLETE REFERENCE
+================================================================================
+                    A comprehensive guide for AgriConnect
+================================================================================
+
+
+📦 INSTALLATION
+================================================================================
+
+# 1. Install Tailwind CSS
+npm install -D tailwindcss postcss autoprefixer
+
+# 2. Initialize Tailwind
+npx tailwindcss init -p
+
+# 3. Configure tailwind.config.js
+# Add your content paths:
+content: ["./index.html", "./src/**/*.{js,jsx}"]
+
+
+📁 FILE STRUCTURE
+================================================================================
+
+frontend/
+├── tailwind.config.js      # Configuration
+├── postcss.config.js       # PostCSS setup
+└── src/
+    └── index.css           # Tailwind imports + custom styles
+
+
+⚙️ CONFIGURATION (tailwind.config.js)
+================================================================================
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Custom colors
+      },
+      spacing: {
+        // Custom spacing
+      },
+      fontFamily: {
+        // Custom fonts
+      },
+    },
+  },
+  plugins: [],
+}
+
+
+🎨 COLORS
+================================================================================
+
+┌─────────────┬──────────────┬─────────────┐
+│ Color       │ Class        │ Hex Code    │
+├─────────────┼──────────────┼─────────────┤
+│ White       │ text-white   │ #ffffff     │
+│ Black       │ text-black   │ #000000     │
+│ Gray-50     │ text-gray-50 │ #f9fafb     │
+│ Gray-100    │ text-gray-100│ #f3f4f6     │
+│ Gray-200    │ text-gray-200│ #e5e7eb     │
+│ Gray-300    │ text-gray-300│ #d1d5db     │
+│ Gray-400    │ text-gray-400│ #9ca3af     │
+│ Gray-500    │ text-gray-500│ #6b7280     │
+│ Gray-600    │ text-gray-600│ #4b5563     │
+│ Gray-700    │ text-gray-700│ #374151     │
+│ Gray-800    │ text-gray-800│ #1f2937     │
+│ Gray-900    │ text-gray-900│ #111827     │
+│ Red-500     │ text-red-500 │ #ef4444     │
+│ Green-500   │ text-green-500│ #22c55e    │
+│ Blue-500    │ text-blue-500│ #3b82f6     │
+│ Amber-500   │ text-amber-500│ #f59e0b    │
+└─────────────┴──────────────┴─────────────┘
+
+💡 Usage: text-white, bg-gray-100, border-red-500
+
+
+📝 TYPOGRAPHY
+================================================================================
+
+FONT SIZES
+┌───────────────┬────────────────┬──────────────┐
+│ Class         │ Size           │ Approx px    │
+├───────────────┼────────────────┼──────────────┤
+│ text-xs       │ 0.75rem        │ 12px         │
+│ text-sm       │ 0.875rem       │ 14px         │
+│ text-base     │ 1rem           │ 16px         │
+│ text-lg       │ 1.125rem       │ 18px         │
+│ text-xl       │ 1.25rem        │ 20px         │
+│ text-2xl      │ 1.5rem         │ 24px         │
+│ text-3xl      │ 1.875rem       │ 30px         │
+│ text-4xl      │ 2.25rem        │ 36px         │
+│ text-5xl      │ 3rem           │ 48px         │
+│ text-6xl      │ 3.75rem        │ 60px         │
+│ text-7xl      │ 4.5rem         │ 72px         │
+│ text-8xl      │ 6rem           │ 96px         │
+│ text-9xl      │ 8rem           │ 128px        │
+└───────────────┴────────────────┴──────────────┘
+
+FONT WEIGHT
+┌────────────────┬─────────────┐
+│ Class          │ Weight      │
+├────────────────┼─────────────┤
+│ font-thin      │ 100         │
+│ font-extralight│ 200         │
+│ font-light     │ 300         │
+│ font-normal    │ 400         │
+│ font-medium    │ 500         │
+│ font-semibold  │ 600         │
+│ font-bold      │ 700         │
+│ font-extrabold │ 800         │
+│ font-black     │ 900         │
+└────────────────┴─────────────┘
+
+TEXT ALIGNMENT
+text-left   → Left align
+text-center → Center align
+text-right  → Right align
+text-justify→ Justify
+
+TEXT TRANSFORM
+uppercase   → ALL CAPS
+lowercase   → all lowercase
+capitalize  → Capitalize Each Word
+normal-case → Normal case
+
+TEXT DECORATION
+underline   → Underline
+line-through→ Strikethrough
+no-underline→ No underline
+
+
+📐 SPACING (Margin & Padding)
+================================================================================
+
+SIZE REFERENCE
+┌─────────┬────────────┬────────────┐
+│ Class   │ Value      │ Approx px  │
+├─────────┼────────────┼────────────┤
+│ p-0     │ 0          │ 0px        │
+│ p-1     │ 0.25rem    │ 4px        │
+│ p-2     │ 0.5rem     │ 8px        │
+│ p-3     │ 0.75rem    │ 12px       │
+│ p-4     │ 1rem       │ 16px       │
+│ p-5     │ 1.25rem    │ 20px       │
+│ p-6     │ 1.5rem     │ 24px       │
+│ p-8     │ 2rem       │ 32px       │
+│ p-10    │ 2.5rem     │ 40px       │
+│ p-12    │ 3rem       │ 48px       │
+│ p-16    │ 4rem       │ 64px       │
+│ p-20    │ 5rem       │ 80px       │
+│ p-24    │ 6rem       │ 96px       │
+└─────────┴────────────┴────────────┘
+
+MARGIN
+m-*    → All sides
+mx-*   → Left & Right
+my-*   → Top & Bottom
+mt-*   → Top
+mb-*   → Bottom
+ml-*   → Left
+mr-*   → Right
+
+PADDING
+p-*    → All sides
+px-*   → Left & Right
+py-*   → Top & Bottom
+pt-*   → Top
+pb-*   → Bottom
+pl-*   → Left
+pr-*   → Right
+
+
+📐 LAYOUT
+================================================================================
+
+DISPLAY
+block        → block
+inline-block → inline-block
+inline       → inline
+flex         → flex
+grid         → grid
+hidden       → display: none
+
+FLEXBOX
+flex         → display: flex
+flex-row     → flex-direction: row
+flex-col     → flex-direction: column
+flex-wrap    → flex-wrap: wrap
+flex-nowrap  → flex-wrap: nowrap
+justify-start→ justify-content: flex-start
+justify-center→ justify-content: center
+justify-end  → justify-content: flex-end
+justify-between→ justify-content: space-between
+items-start  → align-items: flex-start
+items-center → align-items: center
+items-end    → align-items: flex-end
+gap-*        → gap between items
+
+GRID
+grid         → display: grid
+grid-cols-1  → 1 column
+grid-cols-2  → 2 columns
+grid-cols-3  → 3 columns
+grid-cols-4  → 4 columns
+gap-*        → gap between items
+
+POSITIONING
+static       → position: static
+fixed        → position: fixed
+absolute     → position: absolute
+relative     → position: relative
+sticky       → position: sticky
+top-0        → top: 0
+bottom-0     → bottom: 0
+left-0       → left: 0
+right-0      → right: 0
+z-10         → z-index: 10
+z-50         → z-index: 50
+
+
+📐 SIZING
+================================================================================
+
+WIDTH
+w-full       → width: 100%
+w-screen     → width: 100vw
+w-1/2        → width: 50%
+w-1/3        → width: 33.333%
+w-2/3        → width: 66.667%
+w-1/4        → width: 25%
+w-2/4        → width: 50%
+w-3/4        → width: 75%
+w-auto       → width: auto
+
+HEIGHT
+h-full       → height: 100%
+h-screen     → height: 100vh
+h-auto       → height: auto
+h-*          → fixed height
+
+MIN/MAX
+min-h-screen → min-height: 100vh
+max-w-*      → max-width
+max-h-*      → max-height
+
+
+🎨 BORDERS & ROUNDING
+================================================================================
+
+BORDER WIDTH
+border       → 1px border
+border-2     → 2px border
+border-4     → 4px border
+border-8     → 8px border
+border-0     → No border
+
+BORDER COLOR
+border-white       → #ffffff
+border-black       → #000000
+border-gray-200    → #e5e7eb
+border-gray-300    → #d1d5db
+border-gray-400    → #9ca3af
+border-red-500     → #ef4444
+border-green-500   → #22c55e
+
+BORDER RADIUS
+rounded-none → 0px
+rounded-sm   → 0.125rem (2px)
+rounded      → 0.25rem (4px)
+rounded-md   → 0.375rem (6px)
+rounded-lg   → 0.5rem (8px)
+rounded-xl   → 0.75rem (12px)
+rounded-2xl  → 1rem (16px)
+rounded-3xl  → 1.5rem (24px)
+rounded-full → 9999px
+
+
+🎨 EFFECTS
+================================================================================
+
+SHADOWS
+shadow-sm    → small shadow
+shadow       → default shadow
+shadow-md    → medium shadow
+shadow-lg    → large shadow
+shadow-xl    → extra large shadow
+shadow-2xl   → 2x extra large
+shadow-none  → no shadow
+
+OPACITY
+opacity-0    → 0%
+opacity-25   → 25%
+opacity-50   → 50%
+opacity-75   → 75%
+opacity-100  → 100%
+
+BACKDROP
+backdrop-blur-sm  → 4px blur
+backdrop-blur     → 8px blur
+backdrop-blur-md  → 12px blur
+backdrop-blur-lg  → 16px blur
+backdrop-blur-xl  → 24px blur
+backdrop-blur-2xl → 40px blur
+
+
+📱 RESPONSIVE DESIGN
+================================================================================
+
+BREAKPOINTS
+┌───────────┬──────────────┐
+│ Prefix    │ Screen Size  │
+├───────────┼──────────────┤
+│ sm:       │ ≥ 640px      │
+│ md:       │ ≥ 768px      │
+│ lg:       │ ≥ 1024px     │
+│ xl:       │ ≥ 1280px     │
+│ 2xl:      │ ≥ 1536px     │
+└───────────┴──────────────┘
+
+USAGE
+<div className="text-sm md:text-lg lg:text-2xl">
+  This text changes size at different breakpoints
+</div>
+
+<div className="w-full md:w-1/2 lg:w-1/3">
+  Responsive width
+</div>
+
+<div className="flex flex-col md:flex-row">
+  Stack on mobile, row on desktop
+</div>
+
+<div className="hidden md:block">
+  Hidden on mobile, visible on desktop
+</div>
+
+
+🎨 CUSTOM AGRICONNECT COLORS
+================================================================================
+
+Add this to tailwind.config.js:
+
+colors: {
+  agri: {
+    green: {
+      50: '#f0fdf4',
+      100: '#dcfce7',
+      200: '#bbf7d0',
+      300: '#86efac',
+      400: '#4ade80',
+      500: '#22c55e',
+      600: '#16a34a',
+      700: '#15803d',   // Primary Green
+      800: '#166534',
+      900: '#14532d',   // Dark Green
+      950: '#0a2e1a',   // Darkest Green
+    },
+    brown: {
+      50: '#f8f3e9',
+      100: '#f0e6d5',
+      200: '#e0cdb0',
+      300: '#d4a373',
+      400: '#c48b5a',
+      500: '#b07d4b',
+      600: '#9a6a3d',
+      700: '#7f4f24',   // Primary Brown
+      800: '#6b3f1d',
+      900: '#5a3316',   // Dark Brown
+    },
+  },
+}
+
+USAGE:
+text-agri-green-700  → #15803d
+bg-agri-green-900    → #14532d
+border-agri-brown-700→ #7f4f24
+
+
+🔧 COMMON PATTERNS
+================================================================================
+
+GLASS MORPHISM
+<div className="bg-white/70 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl">
+  Glass card content
+</div>
+
+GRADIENT HERO
+<div className="bg-gradient-to-br from-agri-green-900 via-agri-green-700 to-agri-brown-700">
+  Hero content
+</div>
+
+CENTERED CONTAINER
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  Content
+</div>
+
+FLEX CENTER
+<div className="flex items-center justify-center min-h-screen">
+  Centered content
+</div>
+
+GRID LAYOUT
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  Grid items
+</div>
+
+
+📝 BEST PRACTICES
+================================================================================
+
+1. USE UTILITY CLASSES
+   ✅ <div className="bg-white p-4 rounded-lg shadow">
+   ❌ <div style={{ backgroundColor: 'white', padding: '16px' }}>
+
+2. GROUP RELATED CLASSES
+   <button className="
+     px-4 py-2
+     bg-green-600 text-white
+     rounded-lg
+     hover:bg-green-700
+     transition-colors
+   ">
+
+3. USE RESPONSIVE PREFIXES
+   <div className="text-sm md:text-base lg:text-lg">
+
+4. CUSTOMIZE IN TAILWIND.CONFIG.JS
+   // For repeated custom values, add to theme.extend
+
+5. USE @apply FOR REUSABLE COMPONENTS
+   .btn-primary {
+     @apply px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition;
+   }
+
+
+🛠️ DEBUGGING
+================================================================================
+
+# Check if Tailwind is working
+npm run dev
+
+# Watch for changes
+npx tailwindcss -i ./src/index.css -o ./src/output.css --watch
+
+# Check Tailwind configuration
+npx tailwindcss --config
+
+# View all available classes
+npx tailwindcss --help
+
+
+🎯 QUICK REFERENCE CARD
+================================================================================
+
+COLORS:
+  text-{color}-{shade}
+  bg-{color}-{shade}
+  border-{color}-{shade}
+
+TYPOGRAPHY:
+  text-{size}
+  font-{weight}
+  text-{align}
+
+SPACING:
+  p-{size}   m-{size}
+  px-{size}  mx-{size}
+  py-{size}  my-{size}
+
+LAYOUT:
+  flex, grid, block, hidden
+  flex-row, flex-col
+  justify-{position}, items-{position}
+
+SIZING:
+  w-{size}, h-{size}
+  w-full, h-screen
+  max-w-{size}, min-h-screen
+
+BORDERS:
+  border, border-{width}
+  rounded, rounded-{size}
+  border-{color}
+
+EFFECTS:
+  shadow-{size}
+  opacity-{amount}
+  backdrop-blur-{size}
+
+RESPONSIVE:
+  sm:, md:, lg:, xl:, 2xl:
+
+================================================================================
+                     END OF TAILWIND CSS REFERENCE
+================================================================================
